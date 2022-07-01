@@ -6,6 +6,10 @@ function getGoneInterval() {
   return date.now() + Math.floor(Math.random() * 18000) + 2000;
 }
 
+function gethungryInterval() {
+  return date.now() + Math.floor(Math.random() * 3000) + 2000;
+}
+
 const moles = [
   {
     status: 'sad',
@@ -78,6 +82,21 @@ function getNextStatus(mole) {
       break;
     case 'leaving':
       mole.next = Date.now() + 1000;
+      mole.status = 'gone';
+      mole.node.children[0].classList.add('gone');
+      break;
+    case 'gone':
+      mole.status = 'hungry';
+      mole.next = gethungryInterval();
+      mole.node.children[0].classList.add('hungry');
+      mole.node.children[0].classList.remove('gone');
+      mole.node.children[0].src = './static/mole-hungry.png';
+    case 'hungry':
+      mole.status = 'sad';
+      mole.next = getSadInterval();
+      mole.node.children[0].classList.remove('hungry');
+      mole.node.children[0].src = './static/mole-sad.png';
+      break;
   }
 }
 
