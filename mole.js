@@ -3,11 +3,11 @@ function getSadInterval() {
 }
 
 function getGoneInterval() {
-  return date.now() + Math.floor(Math.random() * 18000) + 2000;
+  return Date.now() + Math.floor(Math.random() * 18000) + 2000;
 }
 
 function gethungryInterval() {
-  return date.now() + Math.floor(Math.random() * 3000) + 2000;
+  return Date.now() + Math.floor(Math.random() * 3000) + 2000;
 }
 
 const moles = [
@@ -78,10 +78,10 @@ function getNextStatus(mole) {
     case 'sad':
       mole.next = getSadInterval();
       mole.status = 'leaving';
-      mole.node.src = './Static/mole-leaving.png';
+      mole.node.children[0].src = './Static/mole-leaving.png';
       break;
     case 'leaving':
-      mole.next = Date.now() + 1000;
+      mole.next = getGoneInterval();
       mole.status = 'gone';
       mole.node.children[0].classList.add('gone');
       break;
@@ -91,6 +91,7 @@ function getNextStatus(mole) {
       mole.node.children[0].classList.add('hungry');
       mole.node.children[0].classList.remove('gone');
       mole.node.children[0].src = './static/mole-hungry.png';
+      break;
     case 'hungry':
       mole.status = 'sad';
       mole.next = getSadInterval();
@@ -98,6 +99,21 @@ function getNextStatus(mole) {
       mole.node.children[0].src = './static/mole-sad.png';
       break;
   }
+}
+
+// When the user clicks on an image or a hungry mole
+function feed(e) {
+  if (e.target.targName !== 'IMG' || !e.target.classList.contains('hungry')) {
+    return;
+  }
+
+  //ParseInt because mole from the dataset is a string
+  const mole = moles[parseInt(e.target.dataset.index)];
+
+  mole.status = 'fed';
+  mole.next = getSadInterval();
+  mole.node.children[0].src = './static/mole-fed.png';
+  mole.node.children.remove('hungry');
 }
 
 let runAgainAt = Date.now() + 100;
@@ -116,5 +132,7 @@ function nextFrame() {
 
   requestAnimationFrame(nextFrame);
 }
+
+document.querySelector('.bg').addEventListener('click', feed);
 
 nextFrame();
